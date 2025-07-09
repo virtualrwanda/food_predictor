@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Price Trend Visualization{% endblock %}
+
+{% block content %}
+<div class="card-container max-w-6xl mx-auto relative min-h-screen">
+    <!-- Filter Card -->
+    <div class="card glassmorphism shadow-xl rounded-lg p-6 mb-4 md:mb-0 md:w-1/3 md:left-0 md:top-0" data-x="0" data-y="0">
+        <h2 class="text-xl font-semibold text-neonCyan mb-4">Filter Options</h2>
+        <form method="POST" class="space-y-4">
+            <div>
+                <label for="commodity" class="block text-sm font-medium text-gray-300">Commodity</label>
+                <select name="commodity" id="commodity" class="select-field mt-1 block w-full p-2 bg-darkBase border border-gray-600 rounded-md text-gray-100 focus:ring-neonCyan focus:border-neonCyan">
+                    {% for commodity in commodities %}
+                        <option value="{{ commodity }}" {% if commodity == selected_commodity %}selected{% endif %}>{{ commodity }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="admin1" class="block text-sm font-medium text-gray-300">Region</label>
+                <select name="admin1" id="admin1" class="select-field mt-1 block w-full p-2 bg-darkBase border border-gray-600 rounded-md text-gray-100 focus:ring-neonCyan focus:border-neonCyan">
+                    {% for admin1 in admin1s %}
+                        <option value="{{ admin1 }}" {% if admin1 == selected_admin1 %}selected{% endif %}>{{ admin1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="pricetype" class="block text-sm font-medium text-gray-300">Price Type</label>
+                <select name="pricetype" id="pricetype" class="select-field mt-1 block w-full p-2 bg-darkBase border border-gray-600 rounded-md text-gray-100 focus:ring-neonCyan focus:border-neonCyan">
+                    {% for pricetype in pricetypes %}
+                        <option value="{{ pricetype }}" {% if pricetype == selected_pricetype %}selected{% endif %}>{{ pricetype }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="market" class="block text-sm font-medium text-gray-300">Market</label>
+                <select name="market" id="market" class="select-field mt-1 block w-full p-2 bg-darkBase border border-gray-600 rounded-md text-gray-100 focus:ring-neonCyan focus:border-neonCyan">
+                    <option value="">All Markets</option>
+                    {% for market in markets %}
+                        <option value="{{ market }}" {% if market == selected_market %}selected{% endif %}>{{ market }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="start_date" class="block text-sm font-medium text-gray-300">Start Date</label>
+                <input type="date" name="start_date" id="start_date" value="{{ selected_start_date or '' }}" class="input-field mt-1 block w-full p-2 bg-darkBase border border-gray-600 rounded-md text-gray-100 focus:ring-neonCyan focus:border-neonCyan">
+            </div>
+            <div>
+                <label for="end_date" class="block text-sm font-medium text-gray-300">End Date</label>
+                <input type="date" name="end_date" id="end_date" value="{{ selected_end_date or '' }}" class="input-field mt-1 block w-full p-2 bg-darkBase border border-gray-600 rounded-md text-gray-100 focus:ring-neonCyan focus:border-neonCyan">
+            </div>
+            <button type="submit" class="w-full bg-neonCyan text-darkBase p-2 rounded-md hover:bg-neonPink button-glow transition-all duration-300">Update Chart</button>
+        </form>
+    </div>
+
+    <!-- Chart Card -->
+    <div class="card glassmorphism shadow-xl rounded-lg p-6 mb-4 md:mb-0 md:w-2/3 md:left-1/3 md:top-0" data-x="0" data-y="0">
+        <h2 class="text-xl font-semibold text-neonCyan mb-4">Price Trend Chart</h2>
+        <div class="bg-darkBase p-4 rounded-md">
+            <canvas id="priceTrendChart" class="w-full"></canvas>
+        </div>
+    </div>
+
+    <!-- Info Card -->
+    <!-- <div class="card glassmorphism shadow-xl rounded-lg p-0 md:w-1/2 md:left-0 md:top-6" data-x="0" data-y="0">
+        <h2 class="text-xl font-semibold text-neonCyan mb-4">Additional Information</h2>
+        <div class="space-y-4 text-gray-400">
+            {% if commodities %}
+                <p>Total Commodities: {{ commodities|length }}</p>
+                <p>Regions Covered: {{ admin1s|length }}</p>
+                <p>Price Types: {{ pricetypes|length }}</p>
+            {% else %}
+                <p>No data available. Please check the dataset.</p>
+            {% endif %}
+            <a href="{{ url_for('predict') }}" class="block w-full bg-neonPink text-darkBase p-2 rounded-md hover:bg-neonCyan button-glow text-center transition-all duration-300">Make a Prediction</a>
+        </div>
+    </div> -->
+</div>
+
+<!-- Chart.js and Interact.js CDNs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+<!-- JavaScript for Dragging, Resizing, and Chart Rendering -->
+<script>
+    // Interact.js for draggable and resizable cards
+    interact('.card')
+        .draggable({
+            inertia: true,
+            modifiers: [
+                interact.modifiers.restrictRect({
+                    restriction: 'parent',
+                    endOnly: true
+                })
+            ],
+            autoScroll: true,
+            listeners: {
+                move: dragMoveListener,
+                start(event) {
+                    event.target.classList.add('dragging');
+                },
+                end(event) {
+                    event.target.classList.remove('dragging');
+                }
+            }
+        })
+        .resizable({
+            edges: { left: true, right: true, bottom: true, top: true },
+            modifiers: [
+                interact.modifiers.restrictSize({
+                    min: { width: 200, height: 150 },
+                    max: { width: 800, height: 600 }
+                })
+            ],
+            inertia: true
+        })
+        .on('resizemove', function (event) {
+            var target = event.target;
+            var x = (parseFloat(target.getAttribute('data-x')) || 0);
+            var y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+            target.style.width = event.rect.width + 'px';
+            target.style.height = event.rect.height + 'px';
+
+            x += event.deltaRect.left;
+            y += event.deltaRect.top;
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+            target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+        });
+
+    function dragMoveListener(event) {
+        var target = event.target;
+        var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+        var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+        target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+    }
+
+    // Render Chart.js
+    {% if plot_json %}
+    var ctx = document.getElementById('priceTrendChart').getContext('2d');
+    var chartConfig = {{ plot_json|safe }};
+    new Chart(ctx, chartConfig);
+    {% endif %}
+</script>
+
+<style>
+    /* Ensure cards stay within the viewport */
+    .card-container {
+        position: relative;
+        min-height: 100vh;
+    }
+    .card {
+        position: absolute;
+        min-width: 200px;
+        min-height: 150px;
+        cursor: move;
+        touch-action: none;
+    }
+    .card.dragging {
+        user-select: none;
+    }
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+</style>
+{% endblock %}

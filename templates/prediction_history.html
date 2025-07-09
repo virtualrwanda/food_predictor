@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends 'base.html' %}
+{% block title %}Prediction History{% endblock %}
+{% block content %}
+<div class="w-full max-w-5xl mx-auto">
+    <h1 class="text-3xl text-neonCyan font-bold mb-6 text-center animate-fade-in">Prediction History for {{ current_user.username }}</h1>
+
+    <!-- Filter Form -->
+    <div class="glassmorphism p-6 rounded-lg mb-6">
+        <form method="GET" action="{{ url_for('prediction_history') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label for="commodity" class="text-white text-sm font-semibold">Commodity</label>
+                <select name="commodity" id="commodity" class="select-field w-full p-2 mt-1 rounded bg-darkBase text-white border border-neonCyan focus:outline-none focus:border-neonPink">
+                    <option value="">All Commodities</option>
+                    {% for commodity in commodities %}
+                        <option value="{{ commodity }}" {% if commodity == selected_commodity %}selected{% endif %}>{{ commodity }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="start_date" class="text-white text-sm font-semibold">Start Date</label>
+                <input type="date" name="start_date" id="start_date" value="{{ selected_start_date or '' }}" class="input-field w-full p-2 mt-1 rounded bg-darkBase text-white border border-neonCyan focus:outline-none focus:border-neonPink">
+            </div>
+            <div>
+                <label for="end_date" class="text-white text-sm font-semibold">End Date</label>
+                <input type="date" name="end_date" id="end_date" value="{{ selected_end_date or '' }}" class="input-field w-full p-2 mt-1 rounded bg-darkBase text-white border border-neonCyan focus:outline-none focus:border-neonPink">
+            </div>
+            <div class="sm:col-span-3 text-center">
+                <button type="submit" class="button-glow bg-neonCyan text-darkBase py-2 px-6 rounded mt-4 hover:bg-neonPink transition-all duration-300">Apply Filters</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Chart -->
+    <div class="glassmorphism p-6 rounded-lg mb-6">
+        <canvas id="predictionChart" class="w-full h-96"></canvas>
+    </div>
+
+    <!-- Prediction Table -->
+    {% if predictions %}
+        <div class="glassmorphism p-6 rounded-lg overflow-x-auto">
+            <table class="min-w-full text-white">
+                <thead>
+                    <tr class="border-b border-neonCyan">
+                        <th class="py-3 px-4 text-left">Timestamp</th>
+                        <th class="py-3 px-4 text-left">Commodity</th>
+                        <th class="py-3 px-4 text-left">Market</th>
+                        <th class="py-3 px-4 text-left">Price (USD)</th>
+                        <th class="py-3 px-4 text-left">Price (RWF)</th>
+                        <th class="py-3 px-4 text-left">Input Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pred in predictions %}
+                        <tr class="border-b border-gray-700 hover:bg-neonCyan hover:bg-opacity-10 transition-all duration-200">
+                            <td class="py-3 px-4">{{ pred.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td class="py-3 px-4">{{ pred.input_data.get('commodity', 'N/A') }}</td>
+                            <td class="py-3 px-4">{{ pred.input_data.get('market', 'N/A') }}</td>
+                            <td class="py-3 px-4">{{ pred.predicted_usd_price | round(2) }}</td>
+                            <td class="py-3 px-4">{{ pred.predicted_rwf_price | round(2) }}</td>
+                            <td class="py-3 px-4">
+                                {% for key, value in pred.input_data.items() %}
+                                    <span class="block">{{ key }}: {{ value }}</span>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-white text-center">No predictions available for the selected filters.</p>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('predictionChart').getContext('2d');
+    const chartConfig = {{ plot_json | safe }};
+    new Chart(ctx, chartConfig);
+</script>
+{% endblock %}
+</html>

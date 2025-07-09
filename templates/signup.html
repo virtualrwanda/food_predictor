@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="glassmorphism p-8 rounded-2xl shadow-2xl w-full max-w-md mx-auto animate-fade-in">
+    <h1 class="text-3xl font-bold text-center text-neonCyan mb-8">Sign Up</h1>
+    <form method="POST" action="{{ url_for('signup') }}" class="space-y-4">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.username.label(class="block text-sm font-medium text-white") }}
+            {{ form.username(class="input-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm", placeholder="Choose a Username") }}
+            {% for error in form.username.errors %}
+                <span class="text-neonPink text-xs">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.email.label(class="block text-sm font-medium text-white") }}
+            {{ form.email(class="input-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm", placeholder="Enter your Email") }}
+            {% for error in form.email.errors %}
+                <span class="text-neonPink text-xs">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.password.label(class="block text-sm font-medium text-white") }}
+            {{ form.password(class="input-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm", placeholder="Create a Password") }}
+            {% for error in form.password.errors %}
+                <span class="text-neonPink text-xs">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.confirm_password.label(class="block text-sm font-medium text-white") }}
+            {{ form.confirm_password(class="input-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm", placeholder="Confirm your Password") }}
+            {% for error in form.confirm_password.errors %}
+                <span class="text-neonPink text-xs">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.submit(class="button-glow w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-darkBase bg-gradient-to-r from-neonCyan to-neonPink hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-neonCyan transition-all duration-300") }}
+        </div>
+    </form>
+    <div class="mt-6 text-center text-gray-300">
+        Already have an account? <a href="{{ url_for('login') }}" class="font-medium text-neonCyan hover:text-neonPink">Login</a>
+    </div>
+</div>
+{% endblock %}

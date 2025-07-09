@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% block title %}Predictor{% endblock %}
+
+{% block content %}
+    <div class="glassmorphism p-8 rounded-2xl shadow-2xl grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div>
+            <h1 class="text-3xl font-bold text-center text-neonCyan mb-8 md:text-left">Food Price Predictor</h1>
+
+            <form id="predictionForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="year" class="block text-sm font-medium text-white">Year:</label>
+                    <input type="number" id="year" name="year" value="2023" required
+                           class="input-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                </div>
+                <div>
+                    <label for="month" class="block text-sm font-medium text-white">Month:</label>
+                    <input type="number" id="month" name="month" value="6" min="1" max="12" required
+                           class="input-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                </div>
+                <div>
+                    <label for="day_of_week" class="block text-sm font-medium text-white">Day of Week (0=Mon, 6=Sun):</label>
+                    <input type="number" id="day_of_week" name="day_of_week" value="3" min="0" max="6" required
+                           class="input-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                </div>
+                <div>
+                    <label for="day_of_year" class="block text-sm font-medium text-white">Day of Year:</label>
+                    <input type="number" id="day_of_year" name="day_of_year" value="175" min="1" max="366" required
+                           class="input-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                </div>
+                <div>
+                    <label for="admin1" class="block text-sm font-medium text-white">Admin1 Region:</label>
+                    <select id="admin1" name="admin1" required
+                            class="select-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                        <option value="Kigali City">Kigali City</option>
+                        <option value="Northern Province">Northern Province</option>
+                        <option value="Southern Province">Southern Province</option>
+                        <option value="Eastern Province">Eastern Province</option>
+                        <option value="Western Province">Western Province</option>
+                        <option value="Butare">Butare</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="admin2" class="block text-sm font-medium text-white">Admin2 Region:</label>
+                    <select id="admin2" name="admin2" required
+                            class="select-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                        <option value="Nyarugenge">Nyarugenge</option>
+                        <option value="Gasabo">Gasabo</option>
+                        <option value="Kicukiro">Kicukiro</option>
+                        <option value="Gicumbi">Gicumbi</option>
+                        <option value="Huye">Huye</option>
+                        <option value="Rusizi">Rusizi</option>
+                        <option value="Rubavu">Rubavu</option>
+                        <option value="Musanze">Musanze</option>
+                        <option value="Nyanza">Nyanza</option>
+                        <option value="Bugesera">Bugesera</option>
+                        <option value="Gisagara">Gisagara</option>
+                        <option value="Kamonyi">Kamonyi</option>
+                        <option value="Kayonza">Kayonza</option>
+                        <option value="Muhanga">Muhanga</option>
+                        <option value="Ngororero">Ngororero</option>
+                        <option value="Nyagatare">Nyagatare</option>
+                        <option value="Ruhango">Ruhango</option>
+                        <option value="Rwamanagana">Rwamanagana</option>
+                        <option value="Kirehe">Kirehe</option>
+                        <option value="Nyamagabe">Nyamagabe</option>
+                        <option value="Nyamasheke">Nyamasheke</option>
+                        <option value="Rulindo">Rulindo</option>
+                        <option value="Burera">Burera</option>
+                        <option value="Gakenke">Gakenke</option>
+                        <option value="Karongi">Karongi</option>
+                        <option value="Nyabihu">Nyabihu</option>
+                        <option value="Gatsibo">Gatsibo</option>
+                        <option value="Ngoma">Ngoma</option>
+                        <option value="Rwamagana">Rwamagana</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="market" class="block text-sm font-medium text-white">Market:</label>
+                    <select id="market" name="market" required
+                            class="select-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                        <option value="Kigali">Kigali</option>
+                        <option value="Gasarenda">Gasarenda</option>
+                        <option value="Nyabugogo">Nyabugogo</option>
+                        <option value="Gatsata">Gatsata</option>
+                        <option value="Kicukiro">Kicukiro</option>
+                        <option value="Nyamirambo">Nyamirambo</option>
+                        <option value="Kimironko">Kimironko</option>
+                        <option value="Ruhango">Ruhango</option>
+                        <option value="Huye">Huye</option>
+                        <option value="Rubavu">Rubavu</option>
+                        <option value="Musanze">Musanze</option>
+                        <option value="Rulindo">Rulindo</option>
+                        <option value="Nyanza">Nyanza</option>
+                        <option value="Kayonza">Kayonza</option>
+                        <option value="Kirehe">Kirehe</option>
+                        <option value="Bugesera">Bugesera</option>
+                        <option value="Muhanga">Muhanga</option>
+                        <option value="Rusizi">Rusizi</option>
+                        <option value="Gicumbi">Gicumbi</option>
+                        <option value="Karongi">Karongi</option>
+                        <option value="Ngororero">Ngororero</option>
+                        <option value="Nyamagabe">Nyamagabe</option>
+                        <option value="Nyamasheke">Nyamasheke</option>
+                        <option value="Kamonyi">Kamonyi</option>
+                        <option value="Nyagatare">Nyagatare</option>
+                        <option value="Gakenke">Gakenke</option>
+                        <option value="Gisagara">Gisagara</option>
+                        <option value="Burera">Burera</option>
+                        <option value="Nyabihu">Nyabihu</option>
+                        <option value="Gatsibo">Gatsibo</option>
+                        <option value="Ngoma">Ngoma</option>
+                        <option value="Rwamagana">Rwamagana</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="category" class="block text-sm font-medium text-white">Category:</label>
+                    <select id="category" name="category" required
+                            class="select-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                        <option value="cereals and tubers">Cereals and Tubers</option>
+                        <option value="pulses and nuts">Pulses and Nuts</option>
+                        <option value="vegetables and fruits">Vegetables and Fruits</option>
+                        <option value="oil and fats">Oil and Fats</option>
+                        <option value="milk and dairy">Milk and Dairy</option>
+                        <option value="meat, fish and eggs">Meat, Fish and Eggs</option>
+                        <option value="miscellaneous food">Miscellaneous Food</option>
+                        <option value="non-food">Non-Food</option>
+                        <option value="livestock">Livestock</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="commodity" class="block text-sm font-medium text-white">Commodity:</label>
+                    <select id="commodity" name="commodity" required
+                            class="select-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                        <option value="Maize">Maize</option>
+                        <option value="Beans">Beans</option>
+                        <option value="Cassava flour">Cassava flour</option>
+                        <option value="Potatoes">Potatoes</option>
+                        <option value="Rice">Rice</option>
+                        <option value="Wheat flour">Wheat flour</option>
+                        <option value="Irish potatoes">Irish potatoes</option>
+                        <option value="Sweet potatoes">Sweet potatoes</option>
+                        <option value="Sorghum">Sorghum</option>
+                        <option value="Vegetable oil">Vegetable oil</option>
+                        <option value="Sugar">Sugar</option>
+                        <option value="Salt">Salt</option>
+                        <option value="Soap">Soap</option>
+                        <option value="Charcoal">Charcoal</option>
+                        <option value="Bananas (green)">Bananas (green)</option>
+                        <option value="Goat">Goat</option>
+                        <option value="Beef">Beef</option>
+                        <option value="Fish (fresh)">Fish (fresh)</option>
+                        <option value="Eggs">Eggs</option>
+                        <option value="Milk (pasteurized)">Milk (pasteurized)</option>
+                        <option value="Cabbage">Cabbage</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Tomatoes">Tomatoes</option>
+                        <option value="Groundnuts">Groundnuts</option>
+                        <option value="Millet">Millet</option>
+                        <option value="Avocado">Avocado</option>
+                        <option value="Mango">Mango</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Orange">Orange</option>
+                        <option value="Fish (dried)">Fish (dried)</option>
+                        <option value="Chicken">Chicken</option>
+                        <option value="Pork">Pork</option>
+                        <option value="Sheep">Sheep</option>
+                        <option value="Cow peas">Cow peas</option>
+                        <option value="Lentils">Lentils</option>
+                        <option value="Peas">Peas</option>
+                        <option value="Sunflower oil">Sunflower oil</option>
+                        <option value="Palm oil">Palm oil</option>
+                        <option value="Maize flour">Maize flour</option>
+                        <option value="Meat (beef)">Meat (beef)</option>
+                        <option value="Meat (goat)">Meat (goat)</option>
+                        <option value="Meat (pork)">Meat (pork)</option>
+                        <option value="Meat (chicken)">Meat (chicken)</option>
+                        <option value="Eggs (chicken)">Eggs (chicken)</option>
+                        <option value="Milk (cow)">Milk (cow)</option>
+                        <option value="Cooking oil">Cooking oil</option>
+                        <option value="Groundnut oil">Groundnut oil</option>
+                        <option value="Wheat">Wheat</option>
+                        <option value="Plantains">Plantains</option>
+                        <option value="Cassava">Cassava</option>
+                        <option value="Fish">Fish</option>
+                        <option value="Rice (local)">Rice (local)</option>
+                        <option value="Rice (imported)">Rice (imported)</option>
+                        <option value="Milk (fresh)">Milk (fresh)</option>
+                        <option value="Milk (powder)">Milk (powder)</option>
+                        <option value="Milk (UHT)">Milk (UHT)</option>
+                        <option value="Sorghum flour">Sorghum flour</option>
+                        <option value="Sweet pepper">Sweet pepper</option>
+                        <option value="Carrot">Carrot</option>
+                        <option value="Garlic">Garlic</option>
+                        <option value="Ginger">Ginger</option>
+                        <option value="Cattle">Cattle</option>
+                        <option value="Pig">Pig</sOption>
+                        <option value="Fungicides">Fungicides</option>
+                        <option value="Herbicides">Herbicides</option>
+                        <option value="Fertilizer Urea">Fertilizer Urea</option>
+                        <option value="Fertilizer DAP">Fertilizer DAP</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="unit" class="block text-sm font-medium text-white">Unit:</label>
+                    <select id="unit" name="unit" required
+                            class="select-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                        <option value="KG">KG</option>
+                        <option value="Unit">Unit</option>
+                        <option value="L">L</option>
+                        <option value="G">G</option>
+                        <option value="100 KG">100 KG</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="pricetype" class="block text-sm font-medium text-white">Price Type:</label>
+                    <select id="pricetype" name="pricetype" required
+                            class="select-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                        <option value="Wholesale">Wholesale</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Farm Gate">Farm Gate</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="currency" class="block text-sm font-medium text-white">Currency:</label>
+                    <select id="currency" name="currency" required
+                            class="select-field mt-1 block w-full px-3 py-2 bg-glassBg text-white border border-gray-600 rounded-md focus:outline-none focus:border-neonCyan sm:text-sm">
+                        <option value="RWF">Rwandan Franc (RWF)</option>
+                        <option value="USD">US Dollar (USD)</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-2">
+                    <button type="submit"
+                            class="button-glow w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-darkBase bg-gradient-to-r from-neonCyan to-neonPink hover:bg-gradient-to-l focus:outline-none focus:ring-2 focus:ring-neonCyan transition-all duration-300">
+                        Predict Price
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="flex flex-col justify-between h-full">
+            <div id="predictionResult" class="p-6 bg-glassBg rounded-md text-center text-neonCyan hidden md:mt-0 mt-8">
+                <h2 class="text-2xl font-bold mb-4">Predicted Price</h2>
+                <p class="text-lg">Predicted USD Price: <span id="usdPrice" class="font-semibold"></span></p>
+                <p class="text-lg">Predicted RWF Price: <span id="rwfPrice" class="font-semibold"></span></p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-3">Input Data</h3>
+                <ul id="inputDataList" class="text-sm text-white text-left mx-auto max-w-md space-y-2">
+                    </ul>
+            </div>
+            <div id="errorMessage" class="mt-4 p-4 bg-red-900 rounded-md text-center text-white hidden">
+            </div>
+        </div>
+    </div>
+{% endblock %}

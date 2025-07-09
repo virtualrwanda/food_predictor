@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Price Predictor - {% block title %}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neonCyan: '#00D4FF',
+                        neonPink: '#FF2E63',
+                        darkBase: '#1A1A1A',
+                        glassBg: 'rgba(255, 255, 255, 0.1)',
+                        lightBase: '#F5F5F5',
+                    },
+                    backdropFilter: {
+                        'blur': 'blur(10px)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-in-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1.5px;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .dark .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .light .glassmorphism {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .input-field, .select-field {
+            transition: all 0.3s ease;
+        }
+        .input-field:focus, .select-field:focus {
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            border-color: #00D4FF;
+        }
+        .button-glow:hover {
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        #predictionResult {
+            transition: opacity 0.3s ease;
+        }
+        #inputDataList li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+        }
+        /* Style for flash messages */
+        .flash {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem;
+            text-align: center;
+        }
+        .flash.success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .flash.danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .flash.info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+        .flash.warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+    </style>
+</head>
+<body class="dark bg-darkBase flex items-center justify-center min-h-screen p-4 transition-colors duration-300">
+    <div class="relative w-full max-w-6xl animate-fade-in mx-auto">
+        <button id="themeToggle" class="absolute top-4 right-4 p-2 rounded-full bg-neonCyan text-darkBase hover:bg-neonPink transition-all duration-300 z-10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+        </button>
+
+        <nav class="flex justify-between items-center p-4 mb-4 glassmorphism rounded-lg">
+            <a href="{{ url_for('index') }}" class="text-neonCyan text-2xl font-bold font-orbitron">Food Price Predictor</a>
+            
+            <a href="{{ url_for('home') }}" class="text-neonCyan text-2xl font-bold font-orbitron">Home</a>
+            <div>
+                {% if current_user.is_authenticated %}
+                    <span class="text-white text-md mr-4">Hello, {{ current_user.username }}</span>
+                    <a href="{{ url_for('prediction_history') }}" class="text-neonCyan hover:text-neonPink mr-4">Prediction History</a>
+                    <a href="{{ url_for('visualize_data') }}" class="text-neonCyan hover:text-neonPink mr-4">Visualize Data</a>
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="text-neonCyan hover:text-neonPink mr-4">Admin Dashboard</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}" class="text-neonCyan hover:text-neonPink">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="text-neonCyan hover:text-neonPink mr-4">Login</a>
+                    <a href="{{ url_for('signup') }}" class="text-neonCyan hover:text-neonPink">Sign Up</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mt-4">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            document.body.classList.toggle('light');
+            if (document.body.classList.contains('light')) {
+                document.body.classList.remove('bg-darkBase');
+                document.body.classList.add('bg-lightBase');
+            } else {
+                document.body.classList.remove('bg-lightBase');
+                document.body.classList.add('bg-darkBase');
+            }
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
